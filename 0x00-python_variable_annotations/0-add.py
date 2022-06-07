@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-""" 
-Basic annotations - add 
+"""
+Basic annotations - add
 """
 
 
