@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    Conver float to integer
+Basic annotations - to string
 """
 
 
