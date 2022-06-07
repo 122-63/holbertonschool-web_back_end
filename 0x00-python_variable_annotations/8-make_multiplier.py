@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Callable function
+Complex types - functions
 """
 from typing import Callable
 

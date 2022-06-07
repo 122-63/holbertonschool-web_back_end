@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-    Duck type and iteration
+Let's duck type an iterable object
 """
 from typing import Iterable, Sequence, List, Union, Tuple
 
