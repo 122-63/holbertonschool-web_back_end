@@ -28,7 +28,7 @@ class FIFOCache(BaseCaching):
         self.cache_data[key] = item
         self.next_in += 1
         self.data[self.next_in] = key
-    
+
     def put(self, key, item):
         """
             modify cache data
