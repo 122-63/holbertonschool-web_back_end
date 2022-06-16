@@ -11,7 +11,24 @@ class FIFOCache(BaseCaching):
     def __init__(self):
         """ Init"""
         super().__init__()
+        self.data = {}
+        self.next_in, self.next_out = 0, 0
 
+    def _pop(self):
+        """ FIFO algorithm, remove element """
+        self.next_out += 1
+        key = self.data[self.next_out]
+        del self.data[self.next_out], self.cache_data[key]
+
+    def _push(self, key, item):
+        """ FIFO algorithm, add element """
+        if len(self.cache_data) > BaseCaching.MAX_ITEMS - 1:
+            print("DISCARD: {}".format(self.data[self.next_out + 1]))
+            self._pop()
+        self.cache_data[key] = item
+        self.next_in += 1
+        self.data[self.next_in] = key
+    
     def put(self, key, item):
         """
             modify cache data
@@ -19,15 +36,11 @@ class FIFOCache(BaseCaching):
                 key: of the dict
                 item: value of the key
         """
-        if key or item is not None:
-            value_cache = self.get(key)
-            if value_cache is None:
-                if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-                    keydel = list(self.cache_data.keys())[0]
-                    del self.cache_data[keydel]
-                    print("DISCARD: {}".format(keydel))
-
-            self.cache_data[key] = item
+        if key and item:
+            if key in self.cache_data:
+                self.cache_data[key] = item
+            else:
+                self._push(key, item)
 
     def get(self, key):
         """
@@ -37,6 +50,8 @@ class FIFOCache(BaseCaching):
             Return:
                 value of the key
         """
-
-        value_cache = self.cache_data.get(key)
-        return value_cache
+        if key is None or self.cache_data.get(key) is None:
+            return None
+        if key in self.cache_data:
+            value = self.cache_data[key]
+            return value
