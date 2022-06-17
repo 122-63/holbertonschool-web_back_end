@@ -8,7 +8,8 @@
 from typing import List
 import re
 import logging
-
+import os
+import mysql.connector
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
@@ -54,6 +55,18 @@ def get_logger() -> logging.Logger:
     return logger
 
 
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """Get a point of connection toward the database
+        Return:
+            A connection toward the database
+    """
+    return mysql.connector.connect(
+        user=os.getenv("PERSONAL_DATA_DB_USERNAME", "root"),
+        password=os.getenv("PERSONAL_DATA_DB_PASSWORD", ""),
+        host=os.getenv("PERSONAL_DATA_DB_HOST", "localhost"),
+        database=os.getenv("PERSONAL_DATA_DB_NAME"))
+
+
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """
@@ -77,3 +90,23 @@ def filter_datum(fields: List[str], redaction: str,
         message = re.sub(f'{field}=.*?{separator}',
                          f'{field}={redaction}{separator}', message)
     return message
+
+def main():
+    """Entry Point"""
+    database = get_db()
+    cursor = database.cursor()
+    cursor.execute("SELECT * FROM users;")
+    column_names = [column[0] for column in cursor.description]
+    log = get_logger()
+
+    for record in cursor:
+        message = ''.join(f'{column}={value}{RedactingFormatter.SEPARATOR} '
+                          for column, value in zip(column_names, record))
+        log.info(message)
+
+    cursor.close()
+    database.close()
+
+
+if __name__ == "__main__":
+    main()
