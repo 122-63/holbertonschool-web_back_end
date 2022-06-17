@@ -6,7 +6,31 @@
 """
 import re
 from typing import List
+import logging
 
+class RedactingFormatter(logging.Formatter):
+    """ Redacting Formatter class
+        """
+
+    REDACTION = "***"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    SEPARATOR = ";"
+
+    def __init__(self, fields: List[str]):
+        self.__fields = fields
+        super(RedactingFormatter, self).__init__(self.FORMAT)
+
+    def format(self, record: logging.LogRecord) -> str:
+        """
+            Set the format of the record
+            Args:
+                record: Log record of a event
+            Return:
+                The function overloaded to make a new log with all items
+        """
+        message = logging.Formatter(self.FORMAT).format(record)
+        return filter_datum(self.__fields, self.REDACTION,
+                            message, self.SEPARATOR)
 
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
