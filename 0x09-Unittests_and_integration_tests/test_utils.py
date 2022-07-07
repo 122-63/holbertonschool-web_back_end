@@ -46,9 +46,8 @@ class TestGetJson(unittest.TestCase):
     @patch('test_utils.get_json')
     def test_get_json(self, test_url, test_payload, mock):
         """ mock calls"""
-        mock.return_value = test_payload
-        result = mock.get_json(test_url)
-        self.assertEqual(result, mock.return_value)
+        mock.return_value.json.return_value = test_payload
+        self.assertEqual(get_json(url=test_url), test_payload)
 
 
 class TestMemoize(unittest.TestCase):
