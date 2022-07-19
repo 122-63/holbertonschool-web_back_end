@@ -1,32 +1,15 @@
 #!/usr/bin/env python3
 """
-    String Redis
+Main file
 """
 import redis
-from uuid import uuid4
-from typing import Union
-from functools import wraps
 
+Cache = __import__('exercise').Cache
 
-class Cache:
-    """ Functionality Redis """
+cache = Cache()
 
-    def __init__(self):
-        """ Constructor """
-        self._redis = redis.Redis()
-        self._redis.flushdb()
+data = b"hello"
+key = cache.store(data)
+print(key)
 
-    @call_history
-    @count_calls
-    def store(self, data: Union[str, bytes, int, float]) -> str:
-        """
-            Store the cache
-            Args:
-                data: bring the information to store
-            Return:
-                Key or number uuid
-        """
-        key = str(uuid4())
-        self._redis.set(key, data)
-
-        return key
+local_redis = redis.Redis()
